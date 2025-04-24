@@ -18,6 +18,7 @@ BACKEND_TOKEN = os.environ.get("BACKEND_TOKEN")#AC
 
 CHAT_ENDPOINT = "/chat"
 QUIZ_ENDPOINT = "/quiz"
+AGENT_ENDPOINT = "/agent"
 
 QUIZ_DATA = '''
 {
@@ -129,6 +130,11 @@ def sidebar_menu_fragment():
         if st.button("Répondre au quiz Programmez", type="primary" if st.session_state.active_page == "take-the-random-quiz" else "secondary",
                      use_container_width=True):
             st.session_state.active_page = "take-the-random-quiz"
+            st.rerun()
+            
+        if st.button("Agent de veille technologique", type="primary" if st.session_state.active_page == "agent-techno" else "secondary",
+                     use_container_width=True):
+            st.session_state.active_page = "agent-techno"
             st.rerun()
 
 
@@ -262,6 +268,15 @@ def display_quiz():
                             "C'est une réponse... originale. On ne peut pas vous enlever ça.",
                             "Ne désespérez pas, il reste encore des questions pour confirmer votre talent dans l'erreur."
                         ]), icon=":material/cancel:")
+                        
+@st.fragment
+def display_agent_techno():
+    st.header("Demander à l'agent de veille technologique le sujet qui vous interesse", anchor="agent-techno")
+    st.markdown("Vous pouvez faire une demande à l'agent, il se chargera de vous envoyer un mail sur des sujets que vous aurez choisi.")
+    
+    if user := st.chat_input("Demandez moi ce qui vous tiens à coeur je me charge de trouver les dernières news :-))"):
+
+            response = call_huggingface_space(AGENT_ENDPOINT, {"user": user})
 
 
 def run():
@@ -276,6 +291,8 @@ def run():
     if st.session_state.active_page == "take-the-random-quiz":
         display_quiz()
 
+    if st.session_state.active_page == "agent-techno":
+        display_agent_techno()
 
 if __name__ == "__main__":
     run()
