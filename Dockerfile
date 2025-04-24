@@ -29,4 +29,3 @@ EXPOSE 7860
 
 # Command to run Streamlit app when the container starts
 CMD ["streamlit", "run", "app.py", "--server.port=7860", "--server.headless=true", "--server.enableCORS=false", "--server.enableXsrfProtection=false"]
-
