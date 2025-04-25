@@ -271,12 +271,19 @@ def display_quiz():
                         
 @st.fragment
 def display_agent_techno():
-    st.header("Demander à l'agent de veille technologique le sujet qui vous interesse", anchor="agent-techno")
+    st.header("Demander à l'agent de veille technologique le sujet qui vous intéresse", anchor="agent-techno")
     st.markdown("Vous pouvez faire une demande à l'agent, il se chargera de vous envoyer un mail sur des sujets que vous aurez choisi.")
     
-    if user := st.chat_input("Demandez moi ce qui vous tiens à coeur je me charge de trouver les dernières news :-))"):
+    if user := st.chat_input("Demandez-moi ce qui vous tient à cœur, je me charge de trouver les dernières news :-))"):
+        with st.spinner("L'agent réfléchit et cherche les dernières actualités..."):
+            response = call_huggingface_space(AGENT_ENDPOINT, {"user_input": user})
 
-            response = call_huggingface_space(AGENT_ENDPOINT, {"user": user})
+        if "answer" in response:
+            st.chat_message("assistant").markdown(response["answer"])
+        elif "error" in response:
+            st.chat_message("assistant").error(f"Erreur : {response['error']}")
+        else:
+            st.chat_message("assistant").warning("Une réponse inattendue a été reçue.")
 
 
 def run():
